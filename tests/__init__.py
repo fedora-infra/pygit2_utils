@@ -21,6 +21,13 @@ import unittest
 import pygit2
 
 
+GITCONFIG = """
+[user]
+  name = foo
+  email = foo@bar.com
+"""
+
+
 class BaseTests(unittest.TestCase):
     """ Base class for the unit-tests of pygit2.utils. """
 
@@ -57,6 +64,9 @@ class BaseTests(unittest.TestCase):
         open(os.path.join(git_repo_path, 'sources'), 'w').close()
         repo.index.add('sources')
         repo.index.write()
+
+        with open(os.path.join(git_repo_path, '.git', 'config'), 'a') as stream:
+            stream.write(GITCONFIG)
 
         # Commits the files added
         tree = repo.index.write_tree()
