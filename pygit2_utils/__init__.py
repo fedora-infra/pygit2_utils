@@ -46,8 +46,6 @@ class GitRepo(object):
 
         """
 
-        if dest_path is None:
-            raise
         if os.path.exists(dest_path):
             raise OSError(
                 errno.EEXIST, '%s exists and is not empty' % dest_path)
