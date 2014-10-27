@@ -36,12 +36,10 @@ class ScmTests(BaseTests):
         bare_repo_path = os.path.join(self.gitroot, 'test_repo.git')
         git_repo_path=os.path.join(self.gitroot, 'cloned_repo')
 
-        repo = pygit2_utils.GitRepo()
-
         # Fails: target exists
         self.assertRaises(
             OSError,
-            repo.clone_repo,
+            pygit2_utils.GitRepo.clone_repo,
             bare_repo_path,
             self.gitroot
         )
@@ -49,13 +47,13 @@ class ScmTests(BaseTests):
         # Fails: url invalid
         self.assertRaises(
             pygit2.GitError,
-            repo.clone_repo,
+            pygit2_utils.GitRepo.clone_repo,
             'foo',
             git_repo_path
         )
 
         # Works
-        repo.clone_repo(bare_repo_path, git_repo_path)
+        pygit2_utils.GitRepo.clone_repo(bare_repo_path, git_repo_path)
 
         self.assertTrue(
             os.path.exists(git_repo_path)
