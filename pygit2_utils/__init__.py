@@ -143,3 +143,14 @@ class GitRepo(object):
         head = repo.head
 
         return head.name.replace('refs/heads/', '')
+
+    @property
+    def remote_current_branch(self):
+        """ Return the name of the remove of the current branch checked-out.
+
+        """
+        repo = pygit2.Repository(self.path)
+        branch = repo.lookup_branch(
+            repo.head.name.replace('refs/heads/', ''))
+        if branch.upstream:
+            return branch.upstream_name.replace('refs/remotes/', '')
