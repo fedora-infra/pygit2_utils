@@ -100,6 +100,22 @@ class ScmTests(BaseTests):
         self.assertEqual(config.get('user', 'email'), 'foo@bar.com')
         self.assertEqual(config.get_user(), 'foo <foo@bar.com>')
 
+    def test_current_branch(self):
+        """ Test the pygit2_utils.GitRepo().current_branch returning the
+        current branch
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        self.assertEqual(repo.current_branch, 'master')
+
+        repo_path = os.path.join(self.gitroot, 'test_repo.git')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        self.assertEqual(repo.current_branch, 'master')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)

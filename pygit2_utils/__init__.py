@@ -133,3 +133,13 @@ class GitRepo(object):
         pygit2.clone_repository(url, dest_path, bare=False)
 
         return cls(path=dest_path)
+
+    @property
+    def current_branch(self):
+        """ Return the name of the current branch checked-out.
+
+        """
+        repo = pygit2.Repository(self.path)
+        head = repo.head
+
+        return head.name.replace('refs/heads/', '')
