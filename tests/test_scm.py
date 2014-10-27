@@ -116,6 +116,22 @@ class ScmTests(BaseTests):
 
         self.assertEqual(repo.current_branch, 'master')
 
+    def test_remote_current_branch(self):
+        """ Test the pygit2_utils.GitRepo().remote_current_branch returning
+        the remote of the current branch
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        self.assertEqual(repo.current_remote_name, 'origin/master')
+
+        repo_path = os.path.join(self.gitroot, 'test_repo.git')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        self.assertEqual(repo.current_remote_name, None)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
