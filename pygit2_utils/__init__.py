@@ -40,6 +40,7 @@ class GitRepo(object):
             the dest_path will be /home/bb/bar/foo).
         :type dest_path: str
         :return: a `GitRepo` object instanciated at the provided path
+        :rtype: GitRepo
         :raises OSError: raised when the directory where is cloned the repo
             exists and is not empty
         :raises pygit2.GitError: raised then the url provided is invalid
