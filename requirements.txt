@@ -1,0 +1,3 @@
+# Use this file by running "$ pip install -r requirements.txt"
+pygit2
+
