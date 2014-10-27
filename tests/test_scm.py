@@ -12,6 +12,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
 import unittest
 import sys
 import os
@@ -64,6 +69,36 @@ class ScmTests(BaseTests):
         self.assertTrue(
             os.path.exists(os.path.join(git_repo_path, '.git'))
         )
+
+    def test_git_config(self):
+        """ Test the pygit2_utils.GitConfig to object to browse the git
+        config
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        config = pygit2_utils.GitConfig(repopath=repo_path)
+
+        # Fails: section does not exists
+        self.assertRaises(
+            configparser.NoSectionError,
+            config.get,
+            'foo',
+            'email'
+        )
+
+        # Fails: option does not exists
+        self.assertRaises(
+            configparser.NoOptionError,
+            config.get,
+            'user',
+            'bar'
+        )
+
+        # Works
+        self.assertEqual(config.get('user', 'name'), 'foo')
+        self.assertEqual(config.get('user', 'email'), 'foo@bar.com')
+        self.assertEqual(config.get_user(), 'foo <foo@bar.com>')
 
 
 if __name__ == '__main__':
