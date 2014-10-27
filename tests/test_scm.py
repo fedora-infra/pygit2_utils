@@ -39,7 +39,7 @@ class ScmTests(BaseTests):
         self.setup_git_repo()
 
         bare_repo_path = os.path.join(self.gitroot, 'test_repo.git')
-        git_repo_path=os.path.join(self.gitroot, 'cloned_repo')
+        git_repo_path = os.path.join(self.gitroot, 'cloned_repo')
 
         # Fails: target exists
         self.assertRaises(

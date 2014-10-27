@@ -65,20 +65,25 @@ class BaseTests(unittest.TestCase):
         repo.index.add('sources')
         repo.index.write()
 
-        with open(os.path.join(git_repo_path, '.git', 'config'), 'a') as stream:
+        with open(os.path.join(
+                git_repo_path, '.git', 'config'), 'a') as stream:
             stream.write(GITCONFIG)
 
         # Commits the files added
         tree = repo.index.write_tree()
-        author = pygit2.Signature('Alice Author', 'alice@authors.tld')
-        committer = pygit2.Signature('Cecil Committer', 'cecil@committers.tld')
+        author = pygit2.Signature(
+            'Alice Author', 'alice@authors.tld')
+        committer = pygit2.Signature(
+            'Cecil Committer', 'cecil@committers.tld')
         repo.create_commit(
-            'refs/heads/master', # the name of the reference to update
+            'refs/heads/master',  # the name of the reference to update
             author,
             committer,
             'Add basic file required',
-            tree, # binary string representing the tree object ID
-            [] # list of binary strings representing parents of the new commit
+            # binary string representing the tree object ID
+            tree,
+            # list of binary strings representing parents of the new commit
+            []
         )
 
         # Push to the remote repo
