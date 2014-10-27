@@ -20,35 +20,38 @@ import pygit2
 
 class GitRepo(object):
 
-    def __init__(self, name=None, path=None):
+    def __init__(self, path):
         """ Constructor of the GitRepo class.
 
-        :kwarg name: the name of the git repo. If not provided will be
-            computed automatically.
-        :kward path: the path of the git repo on the filesystem. If not
+        :arg path: the path of the git repo on the filesystem. If not
             provided.
 
         """
-        self._name = name
         self.path = path
 
-    def clone_repo(self, url, dest_path=None):
+    @classmethod
+    def clone_repo(cls, url, dest_path):
         """ Clone a git repo from the provided url at the specified dest_path.
 
         :arg url: the url of the git.
         :type url: str
-        :kwarg dest_path: the path where to clone the git repo.
+        :arg dest_path: the path where to clone the git repo (including the
+            name of the git repo itself, ie: if you clone foo in /home/bb/bar
+            the dest_path will be /home/bb/bar/foo).
         :type dest_path: str
-        :return: None
+        :return: a `GitRepo` object instanciated at the provided path
         :raises OSError: raised when the directory where is cloned the repo
             exists and is not empty
         :raises pygit2.GitError: raised then the url provided is invalid
 
         """
-        path = dest_path or self.path
 
-        if os.path.exists(path):
+        if dest_path is None:
+            raise
+        if os.path.exists(dest_path):
             raise OSError(
-                errno.EEXIST, '%s exists and is not empty' % path)
+                errno.EEXIST, '%s exists and is not empty' % dest_path)
 
-        pygit2.clone_repository(url, path, bare=False)
+        pygit2.clone_repository(url, dest_path, bare=False)
+
+        return cls(path=dest_path)
