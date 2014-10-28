@@ -277,6 +277,22 @@ index 0000000..e69de29
         diff = repo.diff(commitid)
         self.assertEqual(diff.patch, exp)
 
+        self.add_commits()
+
+        commitid = repo_obj.revparse_single('HEAD').oid.hex
+
+        exp = '''diff --git a/sources b/sources
+index 94921de..fa457ba 100644
+--- a/sources
++++ b/sources
+@@ -1 +1 @@
+-0/2
++1/2
+'''
+
+        diff = repo.diff(commitid)
+        self.assertEqual(diff.patch, exp)
+
     def test_diff_commits(self):
         """ Test the pygit2_utils.GitRepo().diff returning the diff of two
         specific commits.
