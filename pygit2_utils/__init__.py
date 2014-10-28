@@ -155,3 +155,44 @@ class GitRepo(object):
         )
 
         return commit
+
+    def diff(self, commitid1=None, commitid2=None):
+        """ Returns the diff of commit(s).
+
+        If no commits are given, the method returns the diff between HEAD
+        and the files that changed locally (just like a `git diff` in a git
+        repo).
+        If one commit is specified, the method returns the diff of the
+        specified commit (like a `git log -p <commitid>` in a git repo).
+        If two commits are specified, the method returns the diff between
+        the two commits.
+
+        :kwarg commitid1: hash of the first commit to use (the oldest one).
+            Can be None.
+        :type commitid1: str
+        :kwarg commitid2: hash of the second commit to use (the most recent).
+            Can be None
+        :type commitid2: str
+        :return: the diff of the specified commits or with the current HEAD.
+        :rtype: str
+
+        """
+        if commitid1 is None and commitid2 is None:
+            diff = self.repository.diff()
+        elif None in [commitid1, commitid2]:
+            commitid = [el for el in [commitid1, commitid2] if el is not None][0]
+            commit = self.repository.get(commitid)
+            if len(commit.parents) > 1:
+                diff = ''
+            elif len(commit.parents) == 1:
+                parent = self.repository.revparse_single('%s^' % commitid)
+                diff = self.repository.diff(parent, commit)
+            else:
+                # First commit in the repo
+                diff = commit.tree.diff_to_tree(swap=True)
+        else:
+            t0 = self.repository.revparse_single(commitid1)
+            t1 = self.repository.revparse_single(commitid2)
+            diff = self.repository.diff(t0, t1)
+
+        return diff
