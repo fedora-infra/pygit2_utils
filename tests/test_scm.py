@@ -216,6 +216,13 @@ index e69de29..d7d49f8 100644
         repo = pygit2_utils.GitRepo(repo_path)
         repo_obj = pygit2.Repository(repo_path)
 
+        # Fails: hash invalid
+        self.assertRaises(
+            ValueError,
+            repo.diff,
+            'foo'
+        )
+
         commitid = repo_obj.revparse_single('HEAD').oid.hex
 
         exp = '''diff --git a/.gitignore b/.gitignore
@@ -243,6 +250,14 @@ index 0000000..e69de29
         repo_path = os.path.join(self.gitroot, 'test_repo')
         repo = pygit2_utils.GitRepo(repo_path)
         repo_obj = pygit2.Repository(repo_path)
+
+        # Fails: hash invalid
+        self.assertRaises(
+            KeyError,
+            repo.diff,
+            'foo',
+            'bar'
+        )
 
         # Retrieve some commits to work with
         commitid = repo_obj.revparse_single('HEAD').oid.hex
