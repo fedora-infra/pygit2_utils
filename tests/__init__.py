@@ -130,3 +130,20 @@ class BaseTests(unittest.TestCase):
         # Create the local branches
         for i in range(n):
             repo.create_branch('foo%s' % i, repo.head.get_object())
+
+    def create_tags(self, n=2):
+        """ Add a tag to the laste `n` commit in the test repo.
+        """
+
+        self.add_commits()
+
+        git_repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2.Repository(git_repo_path)
+        author = pygit2.Signature('Alice Author', 'alice@authors.tld')
+
+        # Create the local branches
+        for i in range(n):
+            commitid = repo.revparse_single('HEAD~%s' % i).oid.hex
+            repo.create_tag(
+                'v%s' % i, commitid, pygit2.GIT_OBJ_COMMIT, author,
+                'tag v%s' % i)
