@@ -150,15 +150,31 @@ class ScmTests(BaseTests):
         repo_path = os.path.join(self.gitroot, 'test_repo')
         repo = pygit2_utils.GitRepo(repo_path)
 
+        repo_obj = pygit2.Repository(repo_path)
+
+        # Check before commit that the commit we do, does not already exist
+        commit = repo_obj.get(repo_obj.revparse_single('HEAD').oid.hex)
+        self.assertNotEqual(commit.message, 'Commit from the tests')
+        self.assertNotEqual(commit.author.name, 'foo')
+        self.assertNotEqual(commit.author.email, 'foo@bar.com')
+
         with open(os.path.join(repo_path, 'sources'), 'w') as stream:
             stream.write('\nBoo!!2')
 
         commitid = repo.commit('Commit from the tests', ['sources'])
-        repo = pygit2.Repository(repo_path)
 
+        # Check that the commitid returned has an .hex attribute that is a
+        # string
         self.assertTrue(isinstance(commitid.hex, str))
 
-        commit = repo.get(commitid.hex)
+        # Check the latest commit has the same hash as the commitid returned
+        self.assertEqual(
+            commitid.hex,
+            repo_obj.revparse_single('HEAD').oid.hex
+        )
+
+        # Check the information of the latest commit
+        commit = repo_obj.get(repo_obj.revparse_single('HEAD').oid.hex)
 
         self.assertEqual(commit.message, 'Commit from the tests')
         self.assertEqual(commit.author.name, 'foo')
