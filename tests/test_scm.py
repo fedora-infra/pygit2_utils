@@ -132,6 +132,28 @@ class ScmTests(BaseTests):
 
         self.assertEqual(repo.remote_current_branch, None)
 
+    def test_commit(self):
+        """ Test the pygit2_utils.GitRepo().commit returning the commit
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('\nBoo!!2')
+
+        commitid = repo.commit('Commit from the tests', ['sources'])
+        repo = pygit2.Repository(repo_path)
+
+        self.assertTrue(isinstance(commitid.hex, str))
+
+        commit = repo.get(commitid.hex)
+
+        self.assertEqual(commit.message, 'Commit from the tests')
+        self.assertEqual(commit.author.name, 'foo')
+        self.assertEqual(commit.author.email, 'foo@bar.com')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
