@@ -210,6 +210,7 @@ class GitRepo(object):
         :type status: str
         :return: the list of branches corresponding to the status specified
         :rtype: list(str)
+        :raises ValueError: when the status specified in not allowed
 
         """
         statuses = ['remote', 'local', 'all']
