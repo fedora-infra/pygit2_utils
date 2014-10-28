@@ -119,3 +119,14 @@ class BaseTests(unittest.TestCase):
                 tree,
                 [parent]
             )
+
+    def add_branches(self, n=2):
+        """ Add `n` branches to the test repo.
+        """
+
+        git_repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2.Repository(git_repo_path)
+
+        # Create the local branches
+        for i in range(n):
+            repo.create_branch('foo%s' % i, repo.head.get_object())
