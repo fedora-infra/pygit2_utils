@@ -243,3 +243,31 @@ class GitRepo(object):
             if ref.startswith('refs/tags')
         ]
         return tags
+
+    def tag(self, tag, commitid=None, message=None):
+        """ Add a tag to the repository.
+
+        :arg tag: the tag to apply
+        :type tag: str
+        :kwarg commitid: the hash of the commit to tag. If not specified it
+            will use HEAD. Defaults to None.
+        :type commitid: str
+        :kwarg message: the message to associate to this tag.
+            Defaults to None
+        :type message: str
+        :return: the hash of the commit tagged
+        :rtype: str
+
+        """
+
+        author = pygit2.Signature(
+            self.config.get_multivar('user.name')[0],
+            self.config.get_multivar('user.email')[0],
+        )
+
+        # Create the tag
+        if commitid is None:
+            commitid = self.repository.revparse_single('HEAD').oid.hex
+
+        return self.repository.create_tag(
+            tag, commitid, pygit2.GIT_OBJ_COMMIT, author, message or '')
