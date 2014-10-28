@@ -107,6 +107,7 @@ class GitRepo(object):
 
         """
         self.path = path
+        self.repository = pygit2.Repository(self.path)
 
     @classmethod
     def clone_repo(cls, url, dest_path):
@@ -139,8 +140,7 @@ class GitRepo(object):
         """ Return the name of the current branch checked-out.
 
         """
-        repo = pygit2.Repository(self.path)
-        head = repo.head
+        head = self.repository.head
 
         return head.name.replace('refs/heads/', '')
 
@@ -149,9 +149,8 @@ class GitRepo(object):
         """ Return the name of the remove of the current branch checked-out.
 
         """
-        repo = pygit2.Repository(self.path)
-        branch = repo.lookup_branch(
-            repo.head.name.replace('refs/heads/', ''))
+        branch = self.repository.lookup_branch(
+            self.repository.head.name.replace('refs/heads/', ''))
         if branch.upstream:
             return branch.upstream_name.replace('refs/remotes/', '')
 
@@ -171,25 +170,24 @@ class GitRepo(object):
         if not isinstance(files, list):
             files = [files]
 
-        repo = pygit2.Repository(self.path)
         config = GitConfig(repopath=self.path)
 
         for filename in files:
-            repo.index.add(filename)
-        repo.index.write()
-        tree = repo.index.write_tree()
+            self.repository.index.add(filename)
+        self.repository.index.write()
+        tree = self.repository.index.write_tree()
 
         # Set variables needed for the commit
         author = pygit2.Signature(
             config.get('user', 'name'), config.get('user', 'email'))
         committer = pygit2.Signature(
             config.get('user', 'name'), config.get('user', 'email'))
-        parent = repo.revparse_single('HEAD').oid.hex
+        parent = self.repository.revparse_single('HEAD').oid.hex
 
         # Do the commit
-        commit = repo.create_commit(
+        commit = self.repository.create_commit(
             # the name of the reference to update
-            repo.head.name,
+            self.repository.head.name,
             author,
             committer,
             message,
