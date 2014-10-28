@@ -309,6 +309,39 @@ index e69de29..fa457ba 100644
         diff = repo.diff(commitid2, commitid)
         self.assertEqual(diff.patch, exp)
 
+    def test_list_branches(self):
+        """ Test the GitRepo().list_branches method returning the list of
+        branches.
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        # Fails: status invalid
+        self.assertRaises(
+            ValueError,
+            repo.list_branches,
+            'foo',
+        )
+
+        branches = repo.list_branches()
+        self.assertEqual(branches, ['master', 'origin/master'])
+
+        self.add_branches()
+
+        branches = repo.list_branches()
+        self.assertEqual(
+            sorted(branches),
+            ['foo0', 'foo1', 'master', 'origin/master']
+        )
+
+        branches = repo.list_branches('local')
+        self.assertEqual(sorted(branches), ['foo0', 'foo1', 'master'])
+
+        branches = repo.list_branches('remote')
+        self.assertEqual(sorted(branches), ['origin/master'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
