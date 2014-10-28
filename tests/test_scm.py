@@ -125,12 +125,12 @@ class ScmTests(BaseTests):
         repo_path = os.path.join(self.gitroot, 'test_repo')
         repo = pygit2_utils.GitRepo(repo_path)
 
-        self.assertEqual(repo.current_remote_name, 'origin/master')
+        self.assertEqual(repo.remote_current_branch, 'origin/master')
 
         repo_path = os.path.join(self.gitroot, 'test_repo.git')
         repo = pygit2_utils.GitRepo(repo_path)
 
-        self.assertEqual(repo.current_remote_name, None)
+        self.assertEqual(repo.remote_current_branch, None)
 
 
 if __name__ == '__main__':
