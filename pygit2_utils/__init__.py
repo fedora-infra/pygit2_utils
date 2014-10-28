@@ -232,3 +232,14 @@ class GitRepo(object):
                 pygit2.GIT_BRANCH_REMOTE | pygit2.GIT_BRANCH_LOCAL)
 
         return branches
+
+    def list_tags(self):
+        """ Return the list of tags present in the repository.
+
+        """
+        tags = [
+            ref.replace('refs/tags/', '')
+            for ref in self.repository.listall_references()
+            if ref.startswith('refs/tags')
+        ]
+        return tags
