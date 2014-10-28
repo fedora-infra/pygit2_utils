@@ -355,6 +355,23 @@ index e69de29..fa457ba 100644
         branches = repo.list_branches('remote')
         self.assertEqual(sorted(branches), ['origin/master'])
 
+    def test_list_tags(self):
+        """ Test the GitRepo().list_tags method returning the list of
+        tags. present in the repo
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, [])
+
+        self.create_tags()
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, ['v0', 'v1'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
