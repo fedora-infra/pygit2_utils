@@ -131,7 +131,7 @@ class BaseTests(unittest.TestCase):
         for i in range(n):
             repo.create_branch('foo%s' % i, repo.head.get_object())
 
-    def create_tags(self, n=2):
+    def add_tags(self, n=2):
         """ Add a tag to the laste `n` commit in the test repo.
         """
 

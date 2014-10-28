@@ -367,7 +367,7 @@ index e69de29..fa457ba 100644
         tags = repo.list_tags()
         self.assertEqual(tags, [])
 
-        self.create_tags()
+        self.add_tags()
 
         tags = repo.list_tags()
         self.assertEqual(tags, ['v0', 'v1'])
