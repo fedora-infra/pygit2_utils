@@ -372,6 +372,34 @@ index e69de29..fa457ba 100644
         tags = repo.list_tags()
         self.assertEqual(tags, ['v0', 'v1'])
 
+    def test_tag(self):
+        """ Test the GitRepo().tag method used to tag a specific commit
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, [])
+
+        self.add_commits(n=4)
+
+        commitid = repo_obj.revparse_single('HEAD~3').oid.hex
+        tagid = repo.tag('test1', commitid, 'test commit')
+        commit = repo_obj.get(tagid)
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, ['test1'])
+
+        commitid = repo_obj.revparse_single('HEAD~2').oid.hex
+        tagid = repo.tag('test2', commitid)
+        commit = repo_obj.get(tagid)
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, ['test1', 'test2'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
