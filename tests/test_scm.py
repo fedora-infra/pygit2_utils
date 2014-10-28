@@ -440,6 +440,12 @@ index e69de29..fa457ba 100644
         tags = repo.list_tags()
         self.assertEqual(tags, ['test1', 'test2'])
 
+        tagid = repo.tag('test3')
+        commit = repo_obj.get(tagid)
+
+        tags = repo.list_tags()
+        self.assertEqual(tags, ['test1', 'test2', 'test3'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
