@@ -154,3 +154,49 @@ class GitRepo(object):
             repo.head.name.replace('refs/heads/', ''))
         if branch.upstream:
             return branch.upstream_name.replace('refs/remotes/', '')
+
+    def commit(self, message, files):
+        """ Commmit the specified list of files with the provided commit
+        message.
+
+        :arg message: the message to use in the git commit
+        :type message: str
+        :arg files: the list of files to include in the commit
+        :type files: list(str)
+        :return: a `pygit2.Oid` object corresponding to the commit made
+        :rtype: pygit2.Oid
+
+        """
+        # Let's be careful about what we get
+        if not isinstance(files, list):
+            files = [files]
+
+        repo = pygit2.Repository(self.path)
+        config = GitConfig(repopath=self.path)
+
+        for filename in files:
+            repo.index.add(filename)
+        repo.index.write()
+        tree = repo.index.write_tree()
+
+        # Set variables needed for the commit
+        author = pygit2.Signature(
+            config.get('user', 'name'), config.get('user', 'email'))
+        committer = pygit2.Signature(
+            config.get('user', 'name'), config.get('user', 'email'))
+        parent = repo.revparse_single('HEAD').oid.hex
+
+        # Do the commit
+        commit = repo.create_commit(
+            # the name of the reference to update
+            repo.head.name,
+            author,
+            committer,
+            message,
+            # binary string representing the tree object ID
+            tree,
+            # list of binary strings representing parents of the new commit
+            [parent]
+        )
+
+        return commit
