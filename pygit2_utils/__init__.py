@@ -168,6 +168,19 @@ class GitRepo(object):
                 files.append(filepath)
         return files
 
+    @property
+    def files_untracked(self):
+        """ Return the list of files that are not tracked in git but present
+        locally.
+
+        """
+        status = self.repository.status()
+        files = []
+        for filepath, flag in status.items():
+            if flag & pygit2.GIT_STATUS_WT_NEW:
+                files.append(filepath)
+        return files
+
     def commit(self, message, files):
         """ Commmit the specified list of files with the provided commit
         message.
