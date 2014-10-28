@@ -180,6 +180,120 @@ class ScmTests(BaseTests):
         self.assertEqual(commit.author.name, 'foo')
         self.assertEqual(commit.author.email, 'foo@bar.com')
 
+    def test_diff_head(self):
+        """ Test the pygit2_utils.GitRepo().diff returning the diff against
+        HEAD
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('\nBoo!!2')
+
+        exp = '''diff --git a/sources b/sources
+index e69de29..d7d49f8 100644
+--- a/sources
++++ b/sources
+@@ -0,0 +1,2 @@
++
++Boo!!2
+\ No newline at end of file
+'''
+
+        diff = repo.diff()
+        self.assertEqual(diff.patch, exp)
+
+    def test_diff_commit(self):
+        """ Test the pygit2_utils.GitRepo().diff returning the diff of a
+        specified commit with its parents.
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        commitid = repo_obj.revparse_single('HEAD').oid.hex
+
+        exp = '''diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.gitignore
+diff --git a/sources b/sources
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/sources
+'''
+
+        diff = repo.diff(commitid)
+        self.assertEqual(diff.patch, exp)
+
+    def test_diff_commits(self):
+        """ Test the pygit2_utils.GitRepo().diff returning the diff of two
+        specific commits.
+        """
+        self.setup_git_repo()
+        self.add_commits()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        # Retrieve some commits to work with
+        commitid = repo_obj.revparse_single('HEAD').oid.hex
+        commitid1 = repo_obj.revparse_single('HEAD^').oid.hex
+        commitid2 = repo_obj.revparse_single('%s^' % commitid1).oid.hex
+
+        exp = '''diff --git a/sources b/sources
+index fa457ba..94921de 100644
+--- a/sources
++++ b/sources
+@@ -1 +1 @@
+-1/2
++0/2
+'''
+
+        diff = repo.diff(commitid, commitid1)
+        self.assertEqual(diff.patch, exp)
+
+        exp = '''diff --git a/sources b/sources
+index 94921de..e69de29 100644
+--- a/sources
++++ b/sources
+@@ -1 +0,0 @@
+-0/2
+'''
+
+        diff = repo.diff(commitid1, commitid2)
+        self.assertEqual(diff.patch, exp)
+
+        exp = '''diff --git a/sources b/sources
+index fa457ba..e69de29 100644
+--- a/sources
++++ b/sources
+@@ -1 +0,0 @@
+-1/2
+'''
+
+        diff = repo.diff(commitid, commitid2)
+        self.assertEqual(diff.patch, exp)
+
+        exp = '''diff --git a/sources b/sources
+index e69de29..fa457ba 100644
+--- a/sources
++++ b/sources
+@@ -0,0 +1 @@
++1/2
+'''
+
+        diff = repo.diff(commitid2, commitid)
+        self.assertEqual(diff.patch, exp)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
