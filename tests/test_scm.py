@@ -446,6 +446,28 @@ index e69de29..fa457ba 100644
         tags = repo.list_tags()
         self.assertEqual(tags, ['test1', 'test2', 'test3'])
 
+    def test_checkout(self):
+        """ Test the GitRepo().checkout method used to change branch
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        branches = repo.list_branches('local')
+        self.assertEqual(branches, ['master'])
+        self.assertEqual(repo.current_branch, 'master')
+
+        self.add_branches()
+        branches = repo.list_branches('local')
+        self.assertEqual(branches, ['foo0', 'foo1', 'master'])
+        self.assertEqual(repo.current_branch, 'master')
+
+        repo.checkout('foo0')
+        branches = repo.list_branches('local')
+        self.assertEqual(branches, ['foo0', 'foo1', 'master'])
+        self.assertEqual(repo.current_branch, 'foo0')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
