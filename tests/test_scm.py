@@ -132,6 +132,27 @@ class ScmTests(BaseTests):
 
         self.assertEqual(repo.remote_current_branch, None)
 
+    def test_files_changed(self):
+        """ Test the pygit2_utils.GitRepo().files_changed returning the
+        list of files tracked that have changed locally
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('\nBoo!!2')
+        with open(os.path.join(repo_path, '.gitignore'), 'w') as stream:
+            stream.write('boo!')
+        with open(os.path.join(repo_path, 'bar'), 'w') as stream:
+            stream.write('blah')
+
+        self.assertEqual(
+            sorted(repo.files_changed),
+            ['.gitignore', 'sources']
+        )
+
     def test_commit(self):
         """ Test the pygit2_utils.GitRepo().commit returning the commit
         """
