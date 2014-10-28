@@ -271,3 +271,15 @@ class GitRepo(object):
 
         return self.repository.create_tag(
             tag, commitid, pygit2.GIT_OBJ_COMMIT, author, message or '')
+
+    def checkout(self, branch_name):
+        """ Checkout the specified branch
+
+        :arg branch_name: the name of the branch to checkout
+        :type branch_name: str
+
+        """
+        branch = self.repository.lookup_branch(branch_name)
+        ref = self.repository.lookup_reference(branch.name)
+
+        self.repository.checkout(ref)
