@@ -200,3 +200,30 @@ class GitRepo(object):
             diff = self.repository.diff(t0, t1)
 
         return diff
+
+    def list_branches(self, status='all'):
+        """ Return the list of branches of the repo.
+
+        :kwarg status: flag used to specify if it should return all the
+            branches, only the local or the remote ones.
+            Can be: `all`, `local`, `remote`. Detaults: `all`.
+        :type status: str
+        :return: the list of branches corresponding to the status specified
+        :rtype: list(str)
+
+        """
+        statuses = ['remote', 'local', 'all']
+        if status not in statuses:
+            raise ValueError('status is not in %s' % statuses)
+
+        if status == 'remote':
+            branches = self.repository.listall_branches(
+                pygit2.GIT_BRANCH_REMOTE)
+        elif status == 'local':
+            branches = self.repository.listall_branches(
+                pygit2.GIT_BRANCH_LOCAL)
+        else:
+            branches = self.repository.listall_branches(
+                pygit2.GIT_BRANCH_REMOTE | pygit2.GIT_BRANCH_LOCAL)
+
+        return branches
