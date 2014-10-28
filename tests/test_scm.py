@@ -34,6 +34,19 @@ from tests import BaseTests
 class ScmTests(BaseTests):
     """ SCM tests. """
 
+    def test_gitrepo(self):
+        """ Test the pygit2_utils.GitRepo() constructor
+        """
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+
+        self.assertRaises(
+            OSError,
+            pygit2_utils.GitRepo,
+            repo_path,
+
+        )
+
     def test_clone_repo(self):
         """ Test the pygit2_utils.clone_repo to clone a repo """
         self.setup_git_repo()
