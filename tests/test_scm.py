@@ -153,6 +153,25 @@ class ScmTests(BaseTests):
             ['.gitignore', 'sources']
         )
 
+    def test_files_untracked(self):
+        """ Test the pygit2_utils.GitRepo().files_untracked returning the
+        list of files not tracked but present locally
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('\nBoo!!2')
+        with open(os.path.join(repo_path, 'bar'), 'w') as stream:
+            stream.write('blah')
+
+        self.assertEqual(
+            repo.files_untracked,
+            ['bar']
+        )
+
     def test_commit(self):
         """ Test the pygit2_utils.GitRepo().commit returning the commit
         """
