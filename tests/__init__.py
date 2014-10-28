@@ -91,3 +91,31 @@ class BaseTests(unittest.TestCase):
         refname = '%s:%s' % (master_ref.name, master_ref.name)
         ori_remote = repo.remotes[0]
         ori_remote.push(refname)
+
+    def add_commits(self, n=2):
+        """ Add `n` commits to the test repo.
+        """
+
+        git_repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2.Repository(git_repo_path)
+
+        # Add basic files needed
+        for i in range(n):
+            with open(os.path.join(git_repo_path, 'sources'), 'w') as stream:
+                stream.write('%s/%s\n' % (i, n))
+            repo.index.add('sources')
+            repo.index.write()
+
+            tree = repo.index.write_tree()
+            parent = repo.revparse_single('HEAD').oid.hex
+
+            # Commits the files added
+            author = pygit2.Signature('Alice Author', 'alice@authors.tld')
+            repo.create_commit(
+                'refs/heads/master',
+                author,
+                author,
+                'Add commit %s out of %s' % (i, n),
+                tree,
+                [parent]
+            )
