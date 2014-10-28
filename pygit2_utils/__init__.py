@@ -175,6 +175,10 @@ class GitRepo(object):
         :type commitid2: str
         :return: the diff of the specified commits or with the current HEAD.
         :rtype: str
+        :raises ValueError: if a commit is provided and could not be found
+            in the repo
+        :raises KeyError: if two commits are provided and at least one of
+            them could not be found in the repo
 
         """
         if commitid1 is None and commitid2 is None:
