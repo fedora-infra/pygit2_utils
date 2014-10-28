@@ -32,6 +32,10 @@ class GitRepo(object):
             provided.
 
         """
+        if not os.path.isdir(path):
+            raise OSError(
+                errno.ENOTDIR, '%s could not be found' % path)
+
         self.path = path
         self.repository = pygit2.Repository(self.path)
         self.config = self.repository.config
