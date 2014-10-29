@@ -423,20 +423,31 @@ index e69de29..fa457ba 100644
 
         commitid = repo_obj.revparse_single('HEAD~3').oid.hex
         tagid = repo.tag('test1', commitid, 'test commit')
-        commit = repo_obj.get(tagid)
+        tagobj = repo_obj.get(tagid)
+        self.assertEqual(tagobj.name, 'test1')
+        self.assertEqual(tagobj.target.hex, commitid)
+        self.assertEqual(tagobj.message, 'test commit')
 
         tags = repo.list_tags()
         self.assertEqual(tags, ['test1'])
 
         commitid = repo_obj.revparse_single('HEAD~2').oid.hex
         tagid = repo.tag('test2', commitid)
-        commit = repo_obj.get(tagid)
+        tagobj = repo_obj.get(tagid)
+        self.assertEqual(tagobj.name, 'test2')
+        self.assertEqual(tagobj.target.hex, commitid)
+        self.assertEqual(tagobj.message, '')
 
         tags = repo.list_tags()
         self.assertEqual(tags, ['test1', 'test2'])
 
         tagid = repo.tag('test3')
-        commit = repo_obj.get(tagid)
+        tagobj = repo_obj.get(tagid)
+        self.assertEqual(tagobj.name, 'test3')
+        self.assertEqual(
+            tagobj.target.hex,
+            repo_obj.revparse_single('HEAD').oid.hex)
+        self.assertEqual(tagobj.message, '')
 
         tags = repo.list_tags()
         self.assertEqual(tags, ['test1', 'test2', 'test3'])
