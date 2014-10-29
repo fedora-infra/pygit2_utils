@@ -288,7 +288,7 @@ class GitRepo(object):
         """
         branch = self.repository.lookup_branch(branch_name)
         if branch is None:
-            raise exceptions.NoSuchBranchError()
+            raise pygit2_utils.exceptions.NoSuchBranchError()
         ref = self.repository.lookup_reference(branch.name)
 
         self.repository.checkout(ref)
@@ -307,6 +307,6 @@ class GitRepo(object):
         """
         branch = self.repository.lookup_branch(branch_name)
         if branch is None:
-            raise exceptions.NoSuchBranchError()
+            raise pygit2_utils.exceptions.NoSuchBranchError()
         ref = self.repository.lookup_reference(branch.name)
         return ref.get_object()
