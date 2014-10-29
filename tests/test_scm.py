@@ -358,8 +358,8 @@ index e69de29..fa457ba 100644
         self.assertEqual(diff.patch, exp)
 
     def test_list_branches(self):
-        """ Test the GitRepo().list_branches method returning the list of
-        branches.
+        """ Test the pygit2_utils.GitRepo().list_branches method returning
+        the list of branches.
         """
         self.setup_git_repo()
 
@@ -391,8 +391,8 @@ index e69de29..fa457ba 100644
         self.assertEqual(sorted(branches), ['origin/master'])
 
     def test_list_tags(self):
-        """ Test the GitRepo().list_tags method returning the list of
-        tags. present in the repo
+        """ Test the pygit2_utils.GitRepo().list_tags method returning the
+        list of tags. present in the repo
         """
         self.setup_git_repo()
 
@@ -408,7 +408,8 @@ index e69de29..fa457ba 100644
         self.assertEqual(tags, ['v0', 'v1'])
 
     def test_tag(self):
-        """ Test the GitRepo().tag method used to tag a specific commit
+        """ Test the pygit2_utils.GitRepo().tag method used to tag a
+        specific commit
         """
         self.setup_git_repo()
 
@@ -453,7 +454,8 @@ index e69de29..fa457ba 100644
         self.assertEqual(tags, ['test1', 'test2', 'test3'])
 
     def test_checkout(self):
-        """ Test the GitRepo().checkout method used to change branch
+        """ Test the pygit2_utils.GitRepo().checkout method used to change
+        branch
         """
         self.setup_git_repo()
 
