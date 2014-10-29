@@ -213,9 +213,9 @@ class GitRepo(object):
                 # First commit in the repo
                 diff = commit.tree.diff_to_tree(swap=True)
         else:
-            t0 = self.repository.revparse_single(commitid1)
-            t1 = self.repository.revparse_single(commitid2)
-            diff = self.repository.diff(t0, t1)
+            c_t0 = self.repository.revparse_single(commitid1)
+            c_t1 = self.repository.revparse_single(commitid2)
+            diff = self.repository.diff(c_t0, c_t1)
 
         return diff
 
