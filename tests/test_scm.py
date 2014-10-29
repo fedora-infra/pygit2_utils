@@ -482,6 +482,40 @@ index e69de29..fa457ba 100644
         self.assertEqual(branches, ['foo0', 'foo1', 'master'])
         self.assertEqual(repo.current_branch, 'foo0')
 
+    def test_head_of_branch(self):
+        """ Test the pygit2_utils.GitRepo().head_of_branch method used to
+        retrieve the HEAD commit of a specified branch
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        branches = repo.list_branches('local')
+        self.assertEqual(branches, ['master'])
+        self.assertEqual(repo.current_branch, 'master')
+
+        self.assertRaises(
+            pygit2_utils.exceptions.NoSuchBranchError,
+            repo.head_of_branch,
+            'foo0'
+        )
+
+        self.add_branches()
+        branches = repo.list_branches('local')
+        self.assertEqual(branches, ['foo0', 'foo1', 'master'])
+        self.assertEqual(repo.current_branch, 'master')
+
+        commit = repo.head_of_branch('foo0')
+        self.assertEqual(repo.current_branch, 'master')
+        self.assertTrue(isinstance(commit, pygit2.Commit))
+
+        # Check that both commits are the same since `master` and `foo0`
+        # are at the same level
+        commit_master = repo.head_of_branch('master')
+        self.assertEqual(repo.current_branch, 'master')
+        self.assertTrue(commit, commit_master)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
