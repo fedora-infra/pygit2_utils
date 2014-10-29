@@ -12,6 +12,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+"""
+pygit2_utils module.
+
+This module aims at providing a simple(r) interface to `pygit2
+<http://www.pygit2.org/>`_. It does not mean to be a replacement for it, as
+such it will contain some of but not all features that pygit2 offers.
+
+"""
 
 import os
 import errno
@@ -22,6 +30,7 @@ import pygit2_utils.exceptions
 
 
 class GitRepo(object):
+    """ Generic interface to a git repository. """
 
     def __init__(self, path):
         """ Constructor of the GitRepo class.
