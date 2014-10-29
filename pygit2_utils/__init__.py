@@ -46,7 +46,7 @@ class GitRepo(object):
             self.config.add_file(potential_config)
 
     @classmethod
-    def clone_repo(cls, url, dest_path):
+    def clone_repo(cls, url, dest_path, bare=False):
         """ Clone a git repo from the provided url at the specified dest_path.
 
         :arg url: the url of the git.
@@ -55,6 +55,9 @@ class GitRepo(object):
             name of the git repo itself, ie: if you clone foo in /home/bb/bar
             the dest_path will be /home/bb/bar/foo).
         :type dest_path: str
+        :kwarg bare: a boolean specifying whether the cloned repo should be
+            a bare repo or not
+        :type bare: bool
         :return: a `GitRepo` object instanciated at the provided path
         :rtype: GitRepo
         :raises OSError: raised when the directory where is cloned the repo
@@ -67,7 +70,7 @@ class GitRepo(object):
             raise OSError(
                 errno.EEXIST, '%s exists and is not empty' % dest_path)
 
-        pygit2.clone_repository(url, dest_path, bare=False)
+        pygit2.clone_repository(url, dest_path, bare=bare)
 
         return cls(path=dest_path)
 
