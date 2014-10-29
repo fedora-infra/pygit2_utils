@@ -1,7 +1,8 @@
+dist/
+build/
 *.pyc
 *.pyo
 *~
 *.swp
 *.egg-info
-dist/
-build/
+.coverage
