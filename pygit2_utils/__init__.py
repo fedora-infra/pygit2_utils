@@ -292,3 +292,21 @@ class GitRepo(object):
         ref = self.repository.lookup_reference(branch.name)
 
         self.repository.checkout(ref)
+
+    def head_of_branch(self, branch_name):
+        """ Return the HEAD commit of the specified branch.
+
+        :arg branch_name: the name of the branch to checkout
+        :type branch_name: str
+        :return: the `pygit2.Commit` found to be the HEAD of the specified
+            branch
+        :rtype: pygit2.Commit
+        :raises pygit2_utils.exceptions.NoSuchBranchError: when the branch
+            cannot be found in the repository
+
+        """
+        branch = self.repository.lookup_branch(branch_name)
+        if branch is None:
+            raise exceptions.NoSuchBranchError()
+        ref = self.repository.lookup_reference(branch.name)
+        return ref.get_object()
