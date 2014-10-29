@@ -70,36 +70,6 @@ class ScmTests(BaseTests):
             os.path.exists(os.path.join(git_repo_path, '.git'))
         )
 
-    def test_git_config(self):
-        """ Test the pygit2_utils.GitConfig to object to browse the git
-        config
-        """
-        self.setup_git_repo()
-
-        repo_path = os.path.join(self.gitroot, 'test_repo')
-        config = pygit2_utils.GitConfig(repopath=repo_path)
-
-        # Fails: section does not exists
-        self.assertRaises(
-            configparser.NoSectionError,
-            config.get,
-            'foo',
-            'email'
-        )
-
-        # Fails: option does not exists
-        self.assertRaises(
-            configparser.NoOptionError,
-            config.get,
-            'user',
-            'bar'
-        )
-
-        # Works
-        self.assertEqual(config.get('user', 'name'), 'foo')
-        self.assertEqual(config.get('user', 'email'), 'foo@bar.com')
-        self.assertEqual(config.get_user(), 'foo <foo@bar.com>')
-
     def test_current_branch(self):
         """ Test the pygit2_utils.GitRepo().current_branch returning the
         current branch
