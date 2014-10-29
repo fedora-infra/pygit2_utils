@@ -18,6 +18,8 @@ import errno
 
 import pygit2
 
+import pygit2_utils.exceptions
+
 
 class GitRepo(object):
 
@@ -280,9 +282,13 @@ class GitRepo(object):
 
         :arg branch_name: the name of the branch to checkout
         :type branch_name: str
+        :raises pygit2_utils.exceptions.NoSuchBranchError: when the branch
+            cannot be found in the repository
 
         """
         branch = self.repository.lookup_branch(branch_name)
+        if branch is None:
+            raise exceptions.NoSuchBranchError()
         ref = self.repository.lookup_reference(branch.name)
 
         self.repository.checkout(ref)
