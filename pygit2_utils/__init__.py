@@ -187,7 +187,11 @@ class GitRepo(object):
         if commitid1 is None and commitid2 is None:
             diff = self.repository.diff()
         elif None in [commitid1, commitid2]:
-            commitid = [el for el in [commitid1, commitid2] if el is not None][0]
+            commitid = [
+                el
+                for el in [commitid1, commitid2]
+                if el is not None
+            ][0]
             commit = self.repository.get(commitid)
             if len(commit.parents) > 1:
                 diff = ''
