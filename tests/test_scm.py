@@ -221,7 +221,6 @@ class ScmTests(BaseTests):
 
         repo_path = os.path.join(self.gitroot, 'test_repo')
         repo = pygit2_utils.GitRepo(repo_path)
-        repo_obj = pygit2.Repository(repo_path)
 
         with open(os.path.join(repo_path, 'sources'), 'w') as stream:
             stream.write('\nBoo!!2')
