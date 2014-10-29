@@ -466,6 +466,12 @@ index e69de29..fa457ba 100644
         self.assertEqual(branches, ['master'])
         self.assertEqual(repo.current_branch, 'master')
 
+        self.assertRaises(
+            pygit2_utils.exceptions.NoSuchBranchError,
+            repo.checkout,
+            'foo0'
+        )
+
         self.add_branches()
         branches = repo.list_branches('local')
         self.assertEqual(branches, ['foo0', 'foo1', 'master'])
