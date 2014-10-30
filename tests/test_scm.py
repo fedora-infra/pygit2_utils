@@ -596,6 +596,75 @@ index 0000000..e69de29
 
         self.assertEqual(patch, exp)
 
+    def test_patch_multi(self):
+        """ Test the pygit2_utils.GitRepo().patch returning a single patch
+        for multiple commits
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        # Fails: hash invalid
+        self.assertRaises(
+            KeyError,
+            repo.patch,
+            'foo'
+        )
+
+        self.add_commits()
+
+        commitids = [repo_obj.revparse_single('HEAD').oid.hex]
+        commitids.append(repo_obj.revparse_single('HEAD^').oid.hex)
+
+        patch = repo.patch(commitids)
+
+        exp = """From <id> Mon Sep 17 00:00:00 2001
+From: Alice Author <alice@authors.tld>
+Date:
+Subject: [PATCH 1/2] Add commit 1 out of 2
+
+
+ foo
+---
+
+diff --git a/sources b/sources
+index 94921de..fa457ba 100644
+--- a/sources
++++ b/sources
+@@ -1 +1 @@
+-0/2
++1/2
+
+From <id> Mon Sep 17 00:00:00 2001
+From: Alice Author <alice@authors.tld>
+Date:
+Subject: [PATCH 2/2] Add commit 0 out of 2
+
+
+ foo
+---
+
+diff --git a/sources b/sources
+index e69de29..94921de 100644
+--- a/sources
++++ b/sources
+@@ -0,0 +1 @@
++0/2
+
+"""
+        patch = patch.split('\n')
+        # We can't predict the git hash
+        patch[0] = 'From <id> Mon Sep 17 00:00:00 2001'
+        patch[17] = 'From <id> Mon Sep 17 00:00:00 2001'
+        # nor the exact date & time we create the commit
+        patch[2] = 'Date:'
+        patch[19] = 'Date:'
+        patch = '\n'.join(patch)
+
+        self.assertEqual(patch, exp)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
