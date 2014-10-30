@@ -537,7 +537,7 @@ index e69de29..fa457ba 100644
 
         commit_local = repo.head_of_branch('master')
         self.assertEqual(repo.current_branch, 'master')
-        self.assertTrue(isinstance(commit, pygit2.Commit))
+        self.assertTrue(isinstance(commit_local, pygit2.Commit))
 
         # Check that both commits are the same since `master` and `foo0`
         # are at the same level
