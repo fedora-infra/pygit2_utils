@@ -21,8 +21,9 @@ such it will contain some of but not all features that pygit2 offers.
 
 """
 
-import os
+import datetime
 import errno
+import os
 
 import pygit2
 
@@ -356,3 +357,67 @@ class GitRepo(object):
         remote = self.repository.create_remote(remote_name, remote_url)
 
         return remote
+
+    def patch(self, commit_ids):
+        """
+
+        For a given commit hash in the git repo,
+        returns a string representation of the changes the commit did in a
+        format that allows it to be used as patch.
+
+        :arg commit_ids: one or more commit hashes to return in a
+            `git format-path` format thus compatible with `git am`.
+        :type commit_ids: str or list(str)
+        :return: the diff of the commits in a `git format-patch` format
+        :rtype: str
+
+        """
+
+        if not isinstance(commit_ids, list):
+            commit_ids = [commit_ids]
+
+        patch = ""
+        for cnt, commitid in enumerate(commit_ids):
+            commit = self.repository.revparse_single(commitid)
+            if commit.parents:
+                diff = commit.tree.diff_to_tree()
+
+                parent = self.repository.revparse_single(
+                    '%s^' % commit.oid.hex)
+                diff = self.repository.diff(parent, commit)
+            else:
+                # First commit in the repo
+                diff = commit.tree.diff_to_tree(swap=True)
+
+            subject = message = ''
+            if '\n' in commit.message:
+                subject, message = commit.message.split('\n', 1)
+            else:
+                subject = commit.message
+
+            if len(commit_ids) > 1:
+                subject = '[PATCH %s/%s] %s' % (
+                    cnt + 1, len(commit_ids), subject)
+
+            var = {
+                'commit': commit.oid.hex,
+                'author_name': commit.author.name,
+                'author_email': commit.author.email,
+                'date': datetime.datetime.utcfromtimestamp(
+                    commit.commit_time).strftime('%b %d %Y %H:%M:%S +0000'),
+                'subject': subject,
+                'msg': message,
+                'patch': diff.patch,
+            }
+
+            patch += """From %(commit)s Mon Sep 17 00:00:00 2001
+From: %(author_name)s <%(author_email)s>
+Date: %(date)s
+Subject: %(subject)s
+
+%(msg)s
+---
+
+%(patch)s
+""" % (var)
+        return patch
