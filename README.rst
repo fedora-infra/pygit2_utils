@@ -22,7 +22,7 @@ with git repositories.
 
 Why using pygit2_utils? pygit2_utils aims at providing a stable API, which
 pygit2 does not (cf the note in this section of the
-pygit2 documentation <https://github.com/libgit2/pygit2/blob/master/docs/install.rst#version-numbers>`_
+`pygit2 documentation <https://github.com/libgit2/pygit2/blob/master/docs/install.rst#version-numbers>`_
 )
 
 
