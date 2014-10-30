@@ -665,6 +665,42 @@ index e69de29..94921de 100644
 
         self.assertEqual(patch, exp)
 
+    def test_merge(self):
+        """ Test the pygit2_utils.GitRepo().merge method used to merge a
+        branch from a repo to another
+        """
+
+        # Create second repo
+        second_path = os.path.join(self.gitroot, 'second_test_repo')
+        second_repo_obj = pygit2.init_repository(second_path)
+        second_repo = pygit2_utils.GitRepo(second_path)
+
+        # Create a commit in our second repo to create the `master` branch
+        open(os.path.join(second_path, 'tmp'), 'w').close()
+        second_repo.commit('first commit', 'tmp')
+
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+        # Add commit to the original repo
+        self.add_commits()
+
+        # Add original repo to second repo
+        remote = second_repo.add_remote('upstream', repo_path)
+        remote.fetch()
+
+        commit = repo_obj.lookup_reference('HEAD').get_object()
+        # Merge original repo into second repo
+        second_repo.merge(
+            commit.oid.hex,
+            branch_name='upstream/master',
+            message='test merge')
+
+        commit = second_repo_obj.lookup_reference('HEAD').get_object()
+        self.assertEqual(commit.message, 'test merge')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
