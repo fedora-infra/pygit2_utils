@@ -494,10 +494,12 @@ Subject: %(subject)s
 
         author = pygit2.Signature(username, useremail)
 
+        sha = None
         if merge.is_uptodate:
             raise pygit2_utils.exceptions.NothingToMergeError()
         elif merge.is_fastforward:
-            master_ref.target = merge.fastforward_oid
+            branch_ref.target = merge.fastforward_oid
+            sha = merge.fastforward_oid
         else:
             self.repository.index.write()
             try:
@@ -511,3 +513,5 @@ Subject: %(subject)s
                 message,
                 tree,
                 [parent, commitid])
+
+        return sha
