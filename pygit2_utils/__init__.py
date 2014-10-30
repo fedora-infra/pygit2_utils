@@ -400,15 +400,7 @@ class GitRepo(object):
         patch = ""
         for cnt, commitid in enumerate(commit_ids):
             commit = self.repository.revparse_single(commitid)
-            if commit.parents:
-                diff = commit.tree.diff_to_tree()
-
-                parent = self.repository.revparse_single(
-                    '%s^' % commit.oid.hex)
-                diff = self.repository.diff(parent, commit)
-            else:
-                # First commit in the repo
-                diff = commit.tree.diff_to_tree(swap=True)
+            diff = self.diff(commit.oid.hex)
 
             subject = message = ''
             if '\n' in commit.message:
