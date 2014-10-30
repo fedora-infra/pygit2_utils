@@ -516,6 +516,35 @@ index e69de29..fa457ba 100644
         self.assertEqual(repo.current_branch, 'master')
         self.assertTrue(commit, commit_master)
 
+    def test_add_remote(self):
+        """ Test the pygit2_utils.GitRepo().add_remote method used to add a
+        remote to a git repository.
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+
+        remote = repo.add_remote('origin_master', repo_path)
+
+        remote.fetch()
+
+        branches = repo.list_branches()
+        self.assertEqual(
+            branches,
+            ['master', 'origin/master', 'origin_master/master'])
+        self.assertEqual(repo.current_branch, 'master')
+
+        commit_local = repo.head_of_branch('master')
+        self.assertEqual(repo.current_branch, 'master')
+        self.assertTrue(isinstance(commit, pygit2.Commit))
+
+        # Check that both commits are the same since `master` and `foo0`
+        # are at the same level
+        commit_remote = repo.head_of_branch('origin_master/master')
+        self.assertEqual(repo.current_branch, 'master')
+        self.assertTrue(commit_local, commit_remote)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
