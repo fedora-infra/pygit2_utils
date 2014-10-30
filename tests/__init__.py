@@ -33,7 +33,7 @@ class BaseTests(unittest.TestCase):
     def setUp(self):
         """ Method run before each tests. """
 
-        self.path = tempfile.mkdtemp(prefix='rpkg-tests.')
+        self.path = tempfile.mkdtemp(prefix='pygit_utils-tests.')
         self.gitroot = os.path.join(self.path, 'gitroot')
 
     def tearDown(self):
