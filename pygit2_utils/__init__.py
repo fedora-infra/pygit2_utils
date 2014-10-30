@@ -478,6 +478,9 @@ Subject: %(subject)s
         try:
             branch_ref = self.repository.lookup_reference(
                 branch_name).resolve()
+        except ValueError:
+            branch_ref = self.repository.lookup_reference(
+                'refs/heads/%s' % branch_name).resolve()
         except KeyError:
             branch_ref = self.repository.lookup_reference(
                 'refs/remotes/%s' % branch_name).resolve()
