@@ -545,6 +545,57 @@ index e69de29..fa457ba 100644
         self.assertEqual(repo.current_branch, 'master')
         self.assertTrue(commit_local, commit_remote)
 
+    def test_patch(self):
+        """ Test the pygit2_utils.GitRepo().patch returning the patch of
+        one commit
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+
+        # Fails: hash invalid
+        self.assertRaises(
+            KeyError,
+            repo.patch,
+            'foo'
+        )
+
+        # Retrieve one commit to work with
+        commitid = repo_obj.revparse_single('HEAD').oid.hex
+
+        patch = repo.patch(commitid)
+
+        exp = """From <id> Mon Sep 17 00:00:00 2001
+From: Alice Author <alice@authors.tld>
+Date:
+Subject: Add basic file required
+
+
+---
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/.gitignore
+diff --git a/sources b/sources
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/sources
+
+"""
+        patch = patch.split('\n')
+        # We can't predict the git hash
+        patch[0] = 'From <id> Mon Sep 17 00:00:00 2001'
+        # nor the exact date & time we create the commit
+        patch[2] = 'Date:'
+        patch = '\n'.join(patch)
+
+        self.assertEqual(patch, exp)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
