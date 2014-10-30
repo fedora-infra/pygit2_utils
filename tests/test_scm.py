@@ -797,6 +797,42 @@ index e69de29..94921de 100644
             message='test merge'
         )
 
+    def test_merge_conflicts(self):
+        """ Test the pygit2_utils.GitRepo().merge method when it conflicts
+        on a merge
+        """
+        # Create second repo
+        second_path = os.path.join(self.gitroot, 'second_test_repo')
+        second_repo_obj = pygit2.init_repository(second_path)
+        second_repo = pygit2_utils.GitRepo(second_path)
+
+        # Create a commit in our second repo that conflicts with those on
+        # the first
+        with open(os.path.join(second_path, 'sources'), 'w') as stream:
+            stream.write('new sources <...>')
+        second_repo.commit('new sources', 'sources')
+
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+        # Add commit to the original repo
+        self.add_commits()
+
+        # Add original repo to second repo
+        remote = second_repo.add_remote('upstream', repo_path)
+        remote.fetch()
+
+        commit = repo_obj.lookup_reference('HEAD').get_object()
+        # Merge original repo into second repo
+        self.assertRaises(
+            pygit2_utils.exceptions.MergeConflictsError,
+            second_repo.merge,
+            commit.oid.hex,
+            message='test merge'
+        )
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
