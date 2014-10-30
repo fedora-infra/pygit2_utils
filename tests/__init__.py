@@ -114,7 +114,7 @@ class BaseTests(unittest.TestCase):
                 'refs/heads/master',
                 author,
                 author,
-                'Add commit %s out of %s' % (i, n),
+                'Add commit %s out of %s\n\n foo' % (i, n),
                 tree,
                 [parent]
             )
