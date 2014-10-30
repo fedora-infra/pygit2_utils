@@ -704,6 +704,31 @@ index e69de29..94921de 100644
         commit = second_repo_obj.lookup_reference('HEAD').get_object()
         self.assertEqual(commit.message, 'test merge')
 
+        # Second merge
+
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('new sources <...>')
+        repo.commit('new sources', 'sources')
+
+        with open(os.path.join(second_path, 'tmp'), 'w') as stream:
+            stream.write('new tmp <...>')
+        second_repo.commit('another blank commit', 'tmp')
+
+        remote.fetch()
+
+        commit = repo_obj.lookup_reference('HEAD').get_object()
+        # Merge original repo into second repo
+        sha = second_repo.merge(commit.oid.hex)
+
+        self.assertNotEqual(commit.oid.hex, sha.hex)
+
+        commitid = commit.oid.hex
+        commit = second_repo_obj.lookup_reference('HEAD').get_object()
+        self.assertEqual(
+            commit.message,
+            'Merge %s into master' % commitid
+        )
+
     def test_merge_fastforward(self):
         """ Test the pygit2_utils.GitRepo().merge method when it merges
         fast-forward
