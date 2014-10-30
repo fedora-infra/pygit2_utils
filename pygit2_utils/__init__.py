@@ -435,7 +435,8 @@ Subject: %(subject)s
 """ % (var)
         return patch
 
-    def merge(self, commitid, branch_name='master', message=None):
+    def merge(self, commitid, branch_name='master', message=None,
+              username=None, useremail=None):
         """ Merge a specified commit into the specified branch of the repo.
 
         If the commit is ahead of the repo by more than one commits, all the
@@ -450,6 +451,12 @@ Subject: %(subject)s
         :kwarg message: the message to use in the merge commit (in case
             fastforward is not an option)
         :type message: str
+        :kwarg username: the username to use for the merge commit (if there
+            is one)
+        :type username: str
+        :kwarg useremail: the email address to use for the merge commit (if
+            there is one)
+        :type useremail: str
         :raises pygit2_utils.exceptions.NothingToMergeError: when there is
             nothing to merge because the two branches are already up to date
         :raises pygit2_utils.exceptions.MergeConflictsError: when the merge
@@ -469,10 +476,12 @@ Subject: %(subject)s
 
         parent = self.repository.revparse_single('HEAD').oid.hex
 
-        author = pygit2.Signature(
-            self.config.get_multivar('user.name')[0],
-            self.config.get_multivar('user.email')[0],
-        )
+        if username is None:
+            username = self.config.get_multivar('user.name')[0]
+        if useremail is None:
+            useremail = self.config.get_multivar('user.email')[0]
+
+        author = pygit2.Signature(username, useremail)
 
         if merge.is_uptodate:
             raise pygit2_utils.exceptions.NothingToMergeError()
