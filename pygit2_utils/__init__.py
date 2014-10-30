@@ -359,11 +359,12 @@ class GitRepo(object):
         return remote
 
     def patch(self, commit_ids):
-        """
+        """ Return the patch formated as would `git-format patch` for one or
+        more commits.
 
-        For a given commit hash in the git repo,
-        returns a string representation of the changes the commit did in a
-        format that allows it to be used as patch.
+        For one or more commit hash in the git repo, returns a string
+        representation of the changes the commit did in a format that allows
+        it to be used as patch.
 
         :arg commit_ids: one or more commit hashes to return in a
             `git format-path` format thus compatible with `git am`.
