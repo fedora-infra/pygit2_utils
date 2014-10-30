@@ -697,7 +697,6 @@ index e69de29..94921de 100644
         # Merge original repo into second repo
         second_repo.merge(
             commit.oid.hex,
-            branch_name='upstream/master',
             message='test merge')
 
         commit = second_repo_obj.lookup_reference('HEAD').get_object()
@@ -730,7 +729,6 @@ index e69de29..94921de 100644
             pygit2_utils.exceptions.NothingToMergeError,
             second_repo.merge,
             commit.oid.hex,
-            branch_name='upstream/master',
             message='test merge'
         )
 
