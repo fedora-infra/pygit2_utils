@@ -257,6 +257,12 @@ index e69de29..d7d49f8 100644
             'foo'
         )
 
+        self.assertRaises(
+            pygit2_utils.exceptions.NoSuchRefError,
+            repo.diff,
+            'f05c03a2054f2d203bb'
+        )
+
         commitid = repo_obj.revparse_single('HEAD').oid.hex
 
         exp = '''diff --git a/.gitignore b/.gitignore
@@ -301,12 +307,32 @@ index 94921de..fa457ba 100644
         repo = pygit2_utils.GitRepo(repo_path)
         repo_obj = pygit2.Repository(repo_path)
 
-        # Fails: hash invalid
+        # Fails: hash invalid (too short)
         self.assertRaises(
             KeyError,
             repo.diff,
             'foo',
             'bar'
+        )
+        self.assertRaises(
+            KeyError,
+            repo.diff,
+            'foo',
+            'f05c03a2054f2d203bb'
+        )
+        self.assertRaises(
+            KeyError,
+            repo.diff,
+            'f05c03a2054f2d203bb',
+            'bar'
+        )
+
+        # Fails: hash invalid (does not exist)
+        self.assertRaises(
+            KeyError,
+            repo.diff,
+            '8f167d70462b088e00b',
+            'f05c03a2054f2d203bb'
         )
 
         # Retrieve some commits to work with
@@ -613,6 +639,12 @@ index 0000000..e69de29
             KeyError,
             repo.get_patch,
             'foo'
+        )
+
+        self.assertRaises(
+            KeyError,
+            repo.get_patch,
+            '8f167d70462b088e00b'
         )
 
         self.add_commits()
