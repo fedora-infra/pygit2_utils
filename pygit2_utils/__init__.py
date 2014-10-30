@@ -289,15 +289,25 @@ class GitRepo(object):
     def checkout(self, branch_name):
         """ Checkout the specified branch
 
-        :arg branch_name: the name of the branch to checkout
+        :arg branch_name: the name of the branch to checkout. It can be a
+            local or remote branch, in the later case it has to be specified
+            as <remote>/<branchname>
         :type branch_name: str
         :raises pygit2_utils.exceptions.NoSuchBranchError: when the branch
             cannot be found in the repository
 
         """
-        branch = self.repository.lookup_branch(branch_name)
+        # Check if the branch exists locally
+        branch = self.repository.lookup_branch(
+            branch_name, pygit2.GIT_BRANCH_LOCAL)
+        # If we do not have a local branch, check if it is a remote one
+        if branch is None:
+            branch = self.repository.lookup_branch(
+                branch_name, pygit2.GIT_BRANCH_REMOTE)
+        # If it is not a local nor a remote, raise exception
         if branch is None:
             raise pygit2_utils.exceptions.NoSuchBranchError()
+
         ref = self.repository.lookup_reference(branch.name)
 
         self.repository.checkout(ref)
@@ -305,7 +315,9 @@ class GitRepo(object):
     def head_of_branch(self, branch_name):
         """ Return the HEAD commit of the specified branch.
 
-        :arg branch_name: the name of the branch to checkout
+        :arg branch_name: the name of the branch to checkout. It can be a
+            local or remote branch, in the later case it has to be specified
+            as <remote>/<branchname>
         :type branch_name: str
         :return: the `pygit2.Commit` found to be the HEAD of the specified
             branch
@@ -314,8 +326,16 @@ class GitRepo(object):
             cannot be found in the repository
 
         """
-        branch = self.repository.lookup_branch(branch_name)
+        # Check if the branch exists locally
+        branch = self.repository.lookup_branch(
+            branch_name, pygit2.GIT_BRANCH_LOCAL)
+        # If we do not have a local branch, check if it is a remote one
+        if branch is None:
+            branch = self.repository.lookup_branch(
+                branch_name, pygit2.GIT_BRANCH_REMOTE)
+        # If it is not a local nor a remote, raise exception
         if branch is None:
             raise pygit2_utils.exceptions.NoSuchBranchError()
+
         ref = self.repository.lookup_reference(branch.name)
         return ref.get_object()
