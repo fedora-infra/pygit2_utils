@@ -194,7 +194,9 @@ class ScmTests(BaseTests):
             stream.write('\nBoo!!2')
 
         # Commit with a single file
-        commitid = repo.commit('Commit from the tests', 'sources')
+        commitid = repo.commit(
+            'Commit from the tests', 'sources',
+            username='bar', useremail='bar@foo.com')
 
         # Check that the commitid returned has an .hex attribute that is a
         # string
@@ -210,8 +212,8 @@ class ScmTests(BaseTests):
         commit = repo_obj.get(repo_obj.revparse_single('HEAD').oid.hex)
 
         self.assertEqual(commit.message, 'Commit from the tests')
-        self.assertEqual(commit.author.name, 'foo')
-        self.assertEqual(commit.author.email, 'foo@bar.com')
+        self.assertEqual(commit.author.name, 'bar')
+        self.assertEqual(commit.author.email, 'bar@foo.com')
 
     def test_diff_head(self):
         """ Test the pygit2_utils.GitRepo().diff returning the diff against
