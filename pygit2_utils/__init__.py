@@ -339,3 +339,20 @@ class GitRepo(object):
 
         ref = self.repository.lookup_reference(branch.name)
         return ref.get_object()
+
+    def add_remote(self, remote_name, remote_url):
+        """ Add a remote to the git repository using the provided name and
+        url.
+
+        :arg remote_name: the name of the remote
+        :type remote_name: str
+        :arg remote_url: the url pointing to the remote
+        :type remote_url: str
+        :return: the remote created
+        :rtype: pygit2.Remote
+
+        """
+
+        remote = self.repository.create_remote(remote_name, remote_url)
+
+        return remote
