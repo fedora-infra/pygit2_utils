@@ -128,7 +128,8 @@ class GitRepo(object):
                 files.append(filepath)
         return files
 
-    def commit(self, message, files, branch='master'):
+    def commit(self, message, files, branch='master', username=None,
+               useremail=None):
         """ Commmit the specified list of files with the provided commit
         message.
 
@@ -138,6 +139,10 @@ class GitRepo(object):
         :type files: list(str)
         :kwarg branch: the name of the branch to update. Defaults to `master`
         :type branch: str
+        :kwarg username: the username to use for the commit
+        :type username: str
+        :kwarg useremail: the email address to use for the commit
+        :type useremail: str
         :return: a `pygit2.Oid` object corresponding to the commit made
         :rtype: pygit2.Oid
 
@@ -152,10 +157,13 @@ class GitRepo(object):
         tree = self.repository.index.write_tree()
 
         # Set variables needed for the commit
-        author = pygit2.Signature(
-            self.config.get_multivar('user.name')[0],
-            self.config.get_multivar('user.email')[0],
-        )
+        if username is None:
+            username = self.config.get_multivar('user.name')[0]
+        if useremail is None:
+            useremail = self.config.get_multivar('user.email')[0]
+
+        author = pygit2.Signature(username, useremail)
+
         parent = None
         try:
             parent = self.repository.revparse_single('HEAD')
