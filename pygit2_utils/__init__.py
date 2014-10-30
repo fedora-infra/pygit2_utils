@@ -434,3 +434,57 @@ Subject: %(subject)s
 %(patch)s
 """ % (var)
         return patch
+
+    def merge(self, commitid, branch_name='master', message=None):
+        """ Merge a specified commit into the specified branch of the repo.
+
+        If the commit is ahead of the repo by more than one commits, all the
+        commits in the pile will be merged.
+
+        :arg commitid: the hash of the commit to merge in the specified
+            branch of the repository
+        :type commitid: str
+        :arg branch_name: the name of the branch into which merge the
+            specified commit
+        :type branch_name: str
+        :raises pygit2_utils.exceptions.NothingToMergeError: when there is
+            nothing to merge because the two branches are already up to date
+        :raises pygit2_utils.exceptions.MergeConflictsError: when the merge
+            cannot be done because of a conflict
+
+        """
+        if message is None:
+            message = 'Merge %s into %s' % (commitid, branch_name)
+
+        merge = self.repository.merge(commitid)
+        try:
+            branch_ref = self.repository.lookup_reference(
+                branch_name).resolve()
+        except KeyError:
+            branch_ref = self.repository.lookup_reference(
+                'refs/remotes/%s' % branch_name).resolve()
+
+        parent = self.repository.revparse_single('HEAD').oid.hex
+
+        author = pygit2.Signature(
+            self.config.get_multivar('user.name')[0],
+            self.config.get_multivar('user.email')[0],
+        )
+
+        if merge.is_uptodate:
+            raise pygit2_utils.exceptions.NothingToMergeError()
+        elif merge.is_fastforward:
+            master_ref.target = merge.fastforward_oid
+        else:
+            self.repository.index.write()
+            try:
+                tree = self.repository.index.write_tree()
+            except pygit2.GitError:
+                raise pygit2_utils.exceptions.MergeConflictsError()
+            sha = self.repository.create_commit(
+                self.repository.head.name,
+                author,
+                author,
+                message,
+                tree,
+                [parent, commitid])
