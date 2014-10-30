@@ -703,6 +703,37 @@ index e69de29..94921de 100644
         commit = second_repo_obj.lookup_reference('HEAD').get_object()
         self.assertEqual(commit.message, 'test merge')
 
+    def test_merge_nothing_to_merge(self):
+        """ Test the pygit2_utils.GitRepo().merge method when it raises a
+        NothingToMergeError exception
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+        # Add commit to the original repo
+        self.add_commits()
+
+        # Create second repo
+        second_path = os.path.join(self.gitroot, 'second_test_repo')
+        second_repo = pygit2_utils.GitRepo.clone_repo(repo_path, second_path)
+        second_repo_obj = pygit2.init_repository(second_path)
+
+        # Add original repo to second repo
+        remote = second_repo.add_remote('upstream', repo_path)
+        remote.fetch()
+
+        commit = repo_obj.lookup_reference('HEAD').get_object()
+        # Merge original repo into second repo
+        self.assertRaises(
+            pygit2_utils.exceptions.NothingToMergeError,
+            second_repo.merge,
+            commit.oid.hex,
+            branch_name='upstream/master',
+            message='test merge'
+        )
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ScmTests)
