@@ -704,6 +704,44 @@ index e69de29..94921de 100644
         commit = second_repo_obj.lookup_reference('HEAD').get_object()
         self.assertEqual(commit.message, 'test merge')
 
+    def test_merge_fastforward(self):
+        """ Test the pygit2_utils.GitRepo().merge method when it merges
+        fast-forward
+        """
+        self.setup_git_repo()
+
+        repo_path = os.path.join(self.gitroot, 'test_repo')
+        repo = pygit2_utils.GitRepo(repo_path)
+        repo_obj = pygit2.Repository(repo_path)
+        # Add commit to the original repo
+        self.add_commits()
+
+        # Create second repo
+        second_path = os.path.join(self.gitroot, 'second_test_repo')
+        second_repo = pygit2_utils.GitRepo.clone_repo(
+            repo_path, second_path)
+        second_repo_obj = pygit2.Repository(second_path)
+
+        # Create a new commit in our original repo
+        with open(os.path.join(repo_path, 'sources'), 'w') as stream:
+            stream.write('new sources')
+        repo.commit('new sources', 'sources')
+
+        # Add original repo to second repo
+        remote = second_repo.add_remote('upstream', repo_path)
+        remote.fetch()
+
+        commit = repo_obj.lookup_reference('HEAD').get_object()
+        # Merge original repo into second repo
+        sha = second_repo.merge(
+            commit.oid.hex,
+            message='test merge')
+
+        self.assertEqual(commit.oid.hex, sha.hex)
+
+        commit = second_repo_obj.lookup_reference('HEAD').get_object()
+        self.assertEqual(commit.message, 'new sources')
+
     def test_merge_nothing_to_merge(self):
         """ Test the pygit2_utils.GitRepo().merge method when it raises a
         NothingToMergeError exception
