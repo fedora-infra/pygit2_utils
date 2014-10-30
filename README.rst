@@ -14,6 +14,12 @@ calling pygit2 under the hood and thus exposing a simple API to interact
 with git repositories.
 
 
+.. note:: This project is currently in a early-alpha stage and if we are
+          pleased with its current status, its API might change in the
+          future (until we make an official 1.0 release).
+          We will try to minimize those API change though.
+
+
 Dependencies
 ------------
 
