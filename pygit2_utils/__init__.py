@@ -210,8 +210,10 @@ class GitRepo(object):
         :type commitid2: str
         :return: the diff of the specified commits or with the current HEAD.
         :rtype: str
-        :raises ValueError: if a single commit is provided with an identifier
-            too short
+        :raises ValueError: if a single commit id is provided but is too
+            short
+        :raises NoSuchRefError: if a single commit id is provided but does
+            not correspond to any commit
         :raises KeyError: if two commits are provided and at least one of
             them could not be found in the repo
 
