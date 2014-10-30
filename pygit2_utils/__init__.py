@@ -378,7 +378,7 @@ class GitRepo(object):
 
         return remote
 
-    def patch(self, commit_ids):
+    def get_patch(self, commit_ids):
         """ Return the patch formated as would `git-format patch` for one or
         more commits.
 

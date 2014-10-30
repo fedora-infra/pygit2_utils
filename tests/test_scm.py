@@ -547,8 +547,8 @@ index e69de29..fa457ba 100644
         self.assertEqual(repo.current_branch, 'master')
         self.assertTrue(commit_local, commit_remote)
 
-    def test_patch(self):
-        """ Test the pygit2_utils.GitRepo().patch returning the patch of
+    def test_get_patch(self):
+        """ Test the pygit2_utils.GitRepo().get_patch returning the patch of
         one commit
         """
         self.setup_git_repo()
@@ -560,14 +560,14 @@ index e69de29..fa457ba 100644
         # Fails: hash invalid
         self.assertRaises(
             KeyError,
-            repo.patch,
+            repo.get_patch,
             'foo'
         )
 
         # Retrieve one commit to work with
         commitid = repo_obj.revparse_single('HEAD').oid.hex
 
-        patch = repo.patch(commitid)
+        patch = repo.get_patch(commitid)
 
         exp = """From <id> Mon Sep 17 00:00:00 2001
 From: Alice Author <alice@authors.tld>
@@ -598,8 +598,8 @@ index 0000000..e69de29
 
         self.assertEqual(patch, exp)
 
-    def test_patch_multi(self):
-        """ Test the pygit2_utils.GitRepo().patch returning a single patch
+    def test_get_patch_multi(self):
+        """ Test the pygit2_utils.GitRepo().get_patch returning a single patch
         for multiple commits
         """
         self.setup_git_repo()
@@ -611,7 +611,7 @@ index 0000000..e69de29
         # Fails: hash invalid
         self.assertRaises(
             KeyError,
-            repo.patch,
+            repo.get_patch,
             'foo'
         )
 
@@ -620,7 +620,7 @@ index 0000000..e69de29
         commitids = [repo_obj.revparse_single('HEAD').oid.hex]
         commitids.append(repo_obj.revparse_single('HEAD^').oid.hex)
 
-        patch = repo.patch(commitids)
+        patch = repo.get_patch(commitids)
 
         exp = """From <id> Mon Sep 17 00:00:00 2001
 From: Alice Author <alice@authors.tld>
