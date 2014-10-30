@@ -454,7 +454,8 @@ Subject: %(subject)s
             branch of the repository
         :type commitid: str
         :arg branch_name: the name of the branch into which merge the
-            specified commit
+            specified commit. Can be the branch name itself, or its reference
+            (ie: refs/heads/<branch_name>)
         :type branch_name: str
         :kwarg message: the message to use in the merge commit (in case
             fastforward is not an option)
@@ -481,9 +482,6 @@ Subject: %(subject)s
         except ValueError:
             branch_ref = self.repository.lookup_reference(
                 'refs/heads/%s' % branch_name).resolve()
-        except KeyError:
-            branch_ref = self.repository.lookup_reference(
-                'refs/remotes/%s' % branch_name).resolve()
 
         parent = self.repository.revparse_single('HEAD').oid.hex
 
