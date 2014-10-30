@@ -210,8 +210,8 @@ class GitRepo(object):
         :type commitid2: str
         :return: the diff of the specified commits or with the current HEAD.
         :rtype: str
-        :raises ValueError: if a commit is provided and could not be found
-            in the repo
+        :raises ValueError: if a single commit is provided with an identifier
+            too short
         :raises KeyError: if two commits are provided and at least one of
             them could not be found in the repo
 
@@ -225,6 +225,8 @@ class GitRepo(object):
                 if el is not None
             ][0]
             commit = self.repository.get(commitid)
+            if commit is None:
+                 raise pygit2_utils.exceptions.NoSuchRefError()
             if len(commit.parents) > 1:
                 diff = ''
             elif len(commit.parents) == 1:
