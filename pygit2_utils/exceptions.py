@@ -41,3 +41,16 @@ class NoSuchBranchError(PyGitUtilsError):
     in the repo.
     """
     message = 'This branch could not be found'
+
+
+class NothingToMergeError(PyGitUtilsError):
+    """ Exception raised when trying to merge two branches which are already
+    in sync.
+    """
+    message = 'Nothing to merge, these branches are already in sync'
+
+
+class MergeConflictsError(PyGitUtilsError):
+    """ Exception raised when trying to merge two branches with a conflict.
+    """
+    message = 'Can not merge these branches, there is a conflict'
