@@ -447,6 +447,9 @@ Subject: %(subject)s
         :arg branch_name: the name of the branch into which merge the
             specified commit
         :type branch_name: str
+        :kwarg message: the message to use in the merge commit (in case
+            fastforward is not an option)
+        :type message: str
         :raises pygit2_utils.exceptions.NothingToMergeError: when there is
             nothing to merge because the two branches are already up to date
         :raises pygit2_utils.exceptions.MergeConflictsError: when the merge
