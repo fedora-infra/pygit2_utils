@@ -695,9 +695,11 @@ index e69de29..94921de 100644
 
         commit = repo_obj.lookup_reference('HEAD').get_object()
         # Merge original repo into second repo
-        second_repo.merge(
+        sha = second_repo.merge(
             commit.oid.hex,
             message='test merge')
+
+        self.assertNotEqual(commit.oid.hex, sha.hex)
 
         commit = second_repo_obj.lookup_reference('HEAD').get_object()
         self.assertEqual(commit.message, 'test merge')
