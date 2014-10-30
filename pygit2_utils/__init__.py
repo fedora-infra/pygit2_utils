@@ -128,7 +128,7 @@ class GitRepo(object):
                 files.append(filepath)
         return files
 
-    def commit(self, message, files):
+    def commit(self, message, files, branch='master'):
         """ Commmit the specified list of files with the provided commit
         message.
 
@@ -136,6 +136,8 @@ class GitRepo(object):
         :type message: str
         :arg files: the list of files to include in the commit
         :type files: list(str)
+        :kwarg branch: the name of the branch to update. Defaults to `master`
+        :type branch: str
         :return: a `pygit2.Oid` object corresponding to the commit made
         :rtype: pygit2.Oid
 
@@ -154,19 +156,29 @@ class GitRepo(object):
             self.config.get_multivar('user.name')[0],
             self.config.get_multivar('user.email')[0],
         )
-        parent = self.repository.revparse_single('HEAD').oid.hex
+        parent = None
+        try:
+            parent = self.repository.revparse_single('HEAD')
+        except KeyError:
+            pass
+
+        parents = []
+        if parent:
+            parents.append(parent.oid.hex)
+
+        ref = 'refs/heads/%s' % branch
 
         # Do the commit
         commit = self.repository.create_commit(
             # the name of the reference to update
-            self.repository.head.name,
+            ref,
             author,
             author,
             message,
             # binary string representing the tree object ID
             tree,
             # list of binary strings representing parents of the new commit
-            [parent]
+            parents
         )
 
         return commit
