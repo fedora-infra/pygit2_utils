@@ -138,15 +138,16 @@ class GitRepo(object):
         :return: the setting corresponding to this key in the configuration
         :rtype: str
         """
-        value = self.config.get_multivar(configkey)
-        if isinstance(value, list):
-            value = value[0]
-        elif str(type(value)) == "<class "\
+        value = None
+        conf = self.config.get_multivar(configkey)
+        if isinstance(conf, list) and len(conf) > 0:
+            value = conf[0]
+        elif str(type(conf)) == "<class "\
                 "'pygit2.config.ConfigMultivarIterator'>":
-            value = value.next()
+            value = conf.next()
         else:
             raise ('Unknown data format retrieved for %s: %s' % (
-                configkey, type(value)))
+                configkey, type(conf)))
         return value
 
     def commit(self, message, files, branch='master', username=None,
