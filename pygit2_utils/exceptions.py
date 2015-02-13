@@ -54,3 +54,10 @@ class MergeConflictsError(PyGitUtilsError):
     """ Exception raised when trying to merge two branches with a conflict.
     """
     message = 'Can not merge these branches, there is a conflict'
+
+
+class ConfigurationChangeError(PyGitUtilsError):
+    """ Exception raised when trying to retrieve a value from the git
+    configuration and pygit2 changed the format returned.
+    """
+    message = 'Unknown data format retrieved'
