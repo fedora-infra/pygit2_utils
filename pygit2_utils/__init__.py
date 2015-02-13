@@ -493,6 +493,9 @@ Subject: %(subject)s
             message = 'Merge %s into %s' % (commitid, branch_name)
 
         merge = self.repository.merge(commitid)
+        mergecode = None
+        if merge is None:
+            mergecode, prefcode = self.repository.merge_analysis(commitid)
         try:
             branch_ref = self.repository.lookup_reference(
                 branch_name).resolve()
@@ -510,11 +513,19 @@ Subject: %(subject)s
         author = pygit2.Signature(username, useremail)
 
         sha = None
-        if merge.is_uptodate:
+        if ((merge is not None and merge.is_uptodate)
+           or
+           (merge is None and mergecode & pygit2.GIT_MERGE_ANALYSIS_UP_TO_DATE)):
             raise pygit2_utils.exceptions.NothingToMergeError()
-        elif merge.is_fastforward:
-            branch_ref.target = merge.fastforward_oid
-            sha = merge.fastforward_oid
+        elif ((merge is not None and merge.is_fastforward)
+           or
+           (merge is None and mergecode & pygit2.GIT_MERGE_ANALYSIS_FASTFORWARD)):
+            if merge is not None:
+                branch_ref.target = merge.fastforward_oid
+                sha = merge.fastforward_oid
+            elif merge is None and mergecode is not None:
+                branch_ref.set_target(commitid)
+                sha = branch_ref.target
         else:
             self.repository.index.write()
             try:
