@@ -128,6 +128,27 @@ class GitRepo(object):
                 files.append(filepath)
         return files
 
+    def get_config(self, configkey):
+        """ For a specified configuration key returned the value
+        corresponding to the setting in the configuration of the repo.
+
+        :arg configkey: the configuration key to search for
+            (for example: "user.email" or "user.name")
+        :type configkey: str
+        :return: the setting corresponding to this key in the configuration
+        :rtype: str
+        """
+        value = self.config.get_multivar(configkey)
+        if isinstance(value, list):
+            value = value[0]
+        elif str(type(value)) == "<class "\
+                "'pygit2.config.ConfigMultivarIterator'>":
+            value = value.next()
+        else:
+            raise ('Unknown data format retrieved for %s: %s' % (
+                configkey, type(value)))
+        return value
+
     def commit(self, message, files, branch='master', username=None,
                useremail=None):
         """ Commmit the specified list of files with the provided commit
