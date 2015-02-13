@@ -179,9 +179,9 @@ class GitRepo(object):
 
         # Set variables needed for the commit
         if username is None:
-            username = self.config.get_multivar('user.name')[0]
+            username = self.get_config('user.name')
         if useremail is None:
-            useremail = self.config.get_multivar('user.email')[0]
+            useremail = self.get_config('user.email')
 
         author = pygit2.Signature(username, useremail)
 
@@ -321,8 +321,8 @@ class GitRepo(object):
         """
 
         author = pygit2.Signature(
-            self.config.get_multivar('user.name')[0],
-            self.config.get_multivar('user.email')[0],
+            self.get_config('user.name'),
+            self.get_config('user.email'),
         )
 
         # Create the tag
@@ -503,9 +503,9 @@ Subject: %(subject)s
         parent = self.repository.revparse_single('HEAD').oid.hex
 
         if username is None:
-            username = self.config.get_multivar('user.name')[0]
+            username = self.get_config('user.name')
         if useremail is None:
-            useremail = self.config.get_multivar('user.email')[0]
+            useremail = self.get_config('user.email')
 
         author = pygit2.Signature(username, useremail)
 
