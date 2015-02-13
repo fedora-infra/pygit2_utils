@@ -14,6 +14,7 @@
 
 import os
 import shutil
+import sys
 import tempfile
 import unittest
 
@@ -38,8 +39,10 @@ class BaseTests(unittest.TestCase):
 
     def tearDown(self):
         """ Method run after each tests. """
-
-        shutil.rmtree(self.path)
+        if sys.exc_info() == (None, None, None):
+            shutil.rmtree(self.path)
+        else:
+            print 'FAILED TESTS AT %s' % self.path
 
     def setup_git_repo(self):
         """ Create a basic git repo withing the tests folder that can be used
