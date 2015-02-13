@@ -37,6 +37,7 @@ Due to the reason mentionned above about why using pygti2_utils, we are
 listing here the pygit2 releases with which pygit2_utils has been tested:
 
 * 0.20.2
+* 0.21.4
 
 
 Testing:
