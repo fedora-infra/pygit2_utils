@@ -782,7 +782,7 @@ index e69de29..94921de 100644
         # Create a new commit in our original repo
         with open(os.path.join(repo_path, 'sources'), 'w') as stream:
             stream.write('new sources')
-        repo.commit('new sources', 'sources')
+        commit = repo.commit('new sources', 'sources')
 
         # Add original repo to second repo
         remote = second_repo.add_remote('upstream', repo_path)
@@ -796,8 +796,10 @@ index e69de29..94921de 100644
 
         self.assertEqual(commit.oid.hex, sha.hex)
 
-        commit = second_repo_obj.lookup_reference('HEAD').get_object()
-        self.assertEqual(commit.message, 'new sources')
+        head_commit = second_repo_obj.lookup_reference('HEAD').get_object()
+        self.assertEqual(head_commit.message, commit.message)
+        self.assertEqual(commit.oid.hex, sha.hex)
+        self.assertEqual(head_commit.oid.hex, commit.hex)
 
     def test_merge_nothing_to_merge(self):
         """ Test the pygit2_utils.GitRepo().merge method when it raises a
