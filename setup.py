@@ -11,6 +11,7 @@ setup(
     url="",
     packages=['pygit2_utils'],
     classifiers=(
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Natural Language :: English',
