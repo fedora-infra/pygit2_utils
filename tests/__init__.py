@@ -42,7 +42,7 @@ class BaseTests(unittest.TestCase):
         if sys.exc_info() == (None, None, None):
             shutil.rmtree(self.path)
         else:
-            print 'FAILED TESTS AT %s' % self.path
+            print('FAILED TESTS AT %s' % self.path)
 
     def setup_git_repo(self):
         """ Create a basic git repo withing the tests folder that can be used
